@@ -1,13 +1,19 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import clsx from 'clsx';
 	import type { SubmitFunction } from '@sveltejs/kit';
+	import type { ActionData } from '../routes/$types';
 
 	export let onCancel: () => void = () => null;
+
+	let className = '';
+	export { className as class };
 
 	const currentLocalDate = new Date().toISOString().slice(0, 10);
 
 	let deductions: number[] = [];
 	let saving = false;
+	let formResult = {} as ActionData;
 
 	const addDeduction = () => {
 		deductions = [...deductions, deductions.length];
@@ -19,15 +25,26 @@
 
 	const onSubmit: SubmitFunction = () => {
 		saving = true;
-		return ({ update }) => {
+		return ({ result, update }) => {
+			if (result.type === 'failure') {
+				formResult = result.data as ActionData;
+			}
+
 			saving = false;
-			onCancel();
 			update();
+			if (result.type === 'success') {
+				onCancel();
+			}
 		};
 	};
 </script>
 
-<form method="post" action="?/salary/save" class="text-center" use:enhance={onSubmit}>
+<form
+	method="post"
+	action="?/salary/save"
+	class={clsx('text-center', className)}
+	use:enhance={onSubmit}
+>
 	<div class="form-control w-full">
 		<label for="date" class="label">
 			<span class="label-text">Date</span>
@@ -55,6 +72,7 @@
 				name="amount"
 				type="number"
 				class="input input-bordered w-full"
+				step="any"
 				autofocus
 				required
 			/>
@@ -74,7 +92,7 @@
 						<!-- svelte-ignore a11y-autofocus -->
 						<input
 							id={`deduction-amount-${i}`}
-							name={`deduction[${i}].amount`}
+							name={`deductions[${i}].amount`}
 							type="number"
 							class="input input-bordered"
 							autofocus
@@ -89,7 +107,7 @@
 
 					<input
 						id={`deduction-description-${i}`}
-						name={`deduction[${i}].description`}
+						name={`deductions[${i}].description`}
 						type="text"
 						class="input input-bordered"
 						required
@@ -109,8 +127,11 @@
 			Add
 		</button>
 	</div>
-	<hr class="border-neutral-600 my-6" />
-	<div class="flex justify-center">
+	<hr class="border-neutral-600 mt-6" />
+	{#if formResult?.exceedingDeductions}
+		<div class="text-center text-error mt-2">Deductions cannot exceed the salary amount</div>
+	{/if}
+	<div class="flex justify-center mt-6">
 		{#if !saving}
 			<button class="btn btn-secondary w-32" on:click|preventDefault={onCancel}>
 				<i class="fa-solid fa-xmark" />
