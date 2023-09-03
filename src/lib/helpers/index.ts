@@ -1,4 +1,9 @@
-export const formatDate = (date: string) => new Date(date).toLocaleDateString('default');
+export const formatDate = (date: string) =>
+	new Date(date).toLocaleDateString('default', {
+		day: 'numeric',
+		month: 'long',
+		year: 'numeric'
+	});
 export const formatCurrency = (amount?: number) =>
 	new Intl.NumberFormat('default', {
 		style: 'currency',

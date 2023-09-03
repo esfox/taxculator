@@ -1,5 +1,6 @@
 import type { DeductionType, SalaryType } from '$lib/types';
 import { randomUUID } from 'crypto';
+import dayjs from 'dayjs';
 import { dataStoreService } from './data-store.service';
 import { computeIncomeTax } from '$lib/helpers/tax';
 import { ExceedingDeductionsError } from '$lib/errors';
@@ -11,7 +12,11 @@ export const salaryService = {
 			throw new Error('Cannot read data');
 		}
 
-		return salaryData;
+		return salaryData.sort((a, b) => {
+			const aDate = dayjs(a.date);
+			const bDate = dayjs(b.date);
+			return bDate.diff(aDate);
+		});
 	},
 	save({
 		id,
