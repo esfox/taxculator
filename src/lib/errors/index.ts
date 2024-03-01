@@ -1,1 +1,1 @@
-export class ExceedingDeductionsError extends Error { }
+export class ExceedingDeductionsError extends Error {}

@@ -5,13 +5,13 @@ import { createSecretKey } from 'crypto';
 const secretKey = createSecretKey(JWT_SECRET, 'utf8');
 
 export function createJwt() {
-	return new SignJWT({})
-		.setProtectedHeader({ alg: JWT_ALGORITHM })
-		.setIssuedAt()
-		.setExpirationTime(JWT_EXPIRATION)
-		.sign(secretKey);
+  return new SignJWT({})
+    .setProtectedHeader({ alg: JWT_ALGORITHM })
+    .setIssuedAt()
+    .setExpirationTime(JWT_EXPIRATION)
+    .sign(secretKey);
 }
 
 export async function verifyJwt(token: string) {
-	await jwtVerify(token, secretKey);
+  await jwtVerify(token, secretKey);
 }

@@ -1,7 +1,9 @@
 # SvelteKit Starter Template
+
 A simple SvelteKit project template.
 
 ### Tech Used
+
 - pnpm
 - TypeScript
 - Tailwind
@@ -9,4 +11,3 @@ A simple SvelteKit project template.
 - FontAwesome
 - ESLint
 - Prettier
-
