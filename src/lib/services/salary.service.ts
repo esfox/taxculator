@@ -1,22 +1,28 @@
+import { ExceedingDeductionsError } from '$lib/errors';
+import { computeIncomeTax } from '$lib/helpers/tax';
 import type { DeductionType, SalaryType } from '$lib/types';
 import { randomUUID } from 'crypto';
 import dayjs from 'dayjs';
 import { dataStoreService } from './data-store.service';
-import { computeIncomeTax } from '$lib/helpers/tax';
-import { ExceedingDeductionsError } from '$lib/errors';
 
 export const salaryService = {
-  list(): SalaryType[] {
+  list(year?: number): SalaryType[] {
     const salaryData = dataStoreService.read<SalaryType[]>();
     if (!salaryData) {
       throw new Error('Cannot read data');
     }
 
-    return salaryData.sort((a, b) => {
+    let salaries: SalaryType[] = salaryData;
+    if (year) {
+      salaries = salaryData.filter((salary) => dayjs(salary.date).year() === year);
+    }
+    const salariesSorted = salaries.sort((a, b) => {
       const aDate = dayjs(a.date);
       const bDate = dayjs(b.date);
       return bDate.diff(aDate);
     });
+
+    return salariesSorted;
   },
   save({
     id,

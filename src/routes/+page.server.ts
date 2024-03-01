@@ -1,12 +1,13 @@
+import { ExceedingDeductionsError } from '$lib/errors';
 import { salaryService } from '$lib/services/salary.service';
 import type { DeductionType } from '$lib/types';
 import { fail, type Actions } from '@sveltejs/kit';
+import dayjs from 'dayjs';
 import { parseFormData } from 'parse-nested-form-data';
 import type { PageServerLoad } from './$types';
-import { ExceedingDeductionsError } from '$lib/errors';
 
 export const load = (() => {
-  const salaries = salaryService.list();
+  const salaries = salaryService.list(dayjs().year());
   const { taxable, tax } = salaryService.computeTax(salaries);
   return { salaries, taxable, tax };
 }) satisfies PageServerLoad;
