@@ -32,7 +32,7 @@ export function computeIncomeTax(taxable: number) {
     const { bracket, percentOffExcess, fixedRate } = spec;
     const [lowerBound, upperBound] = bracket;
     if (taxable >= lowerBound && taxable <= upperBound) {
-      const excessOverLowerBound = taxable - lowerBound;
+      const excessOverLowerBound = taxable - (lowerBound - 1);
       tax = excessOverLowerBound * percentOffExcess;
       tax += fixedRate;
     }
