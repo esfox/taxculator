@@ -73,20 +73,20 @@ export const salaryService = {
     dataStoreService.save(salaryData);
   },
   computeTax(salaries: SalaryType[]) {
+    let income = 0;
     let taxable = 0;
     for (const salary of salaries) {
+      const { amount, deductions } = salary;
       let deductionsTotal = 0;
-      if (salary.deductions) {
-        deductionsTotal = salary.deductions.reduce(
-          (total, deduction) => total + deduction.amount,
-          0
-        );
+      if (deductions) {
+        deductionsTotal = deductions.reduce((total, deduction) => total + deduction.amount, 0);
       }
 
-      taxable += salary.amount - deductionsTotal;
+      income += amount;
+      taxable += amount - deductionsTotal;
     }
 
     const tax = computeIncomeTax(taxable);
-    return { taxable, tax };
+    return { income, taxable, tax };
   }
 };

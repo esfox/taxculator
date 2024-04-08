@@ -8,8 +8,8 @@ import type { PageServerLoad } from './$types';
 
 export const load = (() => {
   const salaries = salaryService.list(dayjs().year());
-  const { taxable, tax } = salaryService.computeTax(salaries);
-  return { salaries, taxable, tax };
+  const { income, taxable, tax } = salaryService.computeTax(salaries);
+  return { salaries, income, taxable, tax };
 }) satisfies PageServerLoad;
 
 export const actions = {

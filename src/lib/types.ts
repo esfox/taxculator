@@ -8,5 +8,6 @@ export type SalaryType = {
   date: string;
   amount: number;
   deductions: DeductionType[];
+  income?: number;
   taxable?: number;
 };
