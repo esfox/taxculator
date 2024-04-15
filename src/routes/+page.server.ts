@@ -1,15 +1,14 @@
-import { ExceedingDeductionsError } from '$lib/errors';
 import { salaryService } from '$lib/services/salary.service';
-import type { DeductionType } from '$lib/types';
-import { fail, type Actions } from '@sveltejs/kit';
+import { type Actions } from '@sveltejs/kit';
 import dayjs from 'dayjs';
 import { parseFormData } from 'parse-nested-form-data';
 import type { PageServerLoad } from './$types';
+import { taxService } from '$lib/services/tax.service';
 
 export const load = (() => {
-  const salaries = salaryService.list(dayjs().year());
-  const { income, taxable, tax } = salaryService.computeTax(salaries);
-  return { salaries, income, taxable, tax };
+  const { salaries, totalIncome } = salaryService.list(dayjs().year());
+  const { taxableIncome, tax } = taxService.computeWithGraduatedTaxRates(totalIncome);
+  return { salaries, totalIncome, taxableIncome, tax };
 }) satisfies PageServerLoad;
 
 export const actions = {
@@ -18,14 +17,7 @@ export const actions = {
     const data = parseFormData(formData);
     const date = data.date as string;
     const amount = Number(data.amount) as number;
-    const deductions = data.deductions as DeductionType[];
-    try {
-      salaryService.save({ date, amount, deductions });
-    } catch (error) {
-      if (error instanceof ExceedingDeductionsError) {
-        return fail(400, { exceedingDeductions: true });
-      }
-    }
+    salaryService.save({ date, amount });
     return { success: true };
   }
 } satisfies Actions;

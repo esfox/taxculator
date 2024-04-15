@@ -7,8 +7,8 @@
 
   export let data: PageServerData;
   $: salaries = data.salaries as SalaryType[];
-  $: income = data.income;
-  $: taxable = data.taxable;
+  $: income = data.totalIncome;
+  $: taxable = data.taxableIncome;
   $: tax = data.tax;
 
   let isAddingSalary = false;
@@ -21,7 +21,7 @@
     {#if isAddingSalary}
       <AddSalaryForm class="w-80 mx-auto" onCancel={toggleAddingSalary} />
     {:else}
-      <div class="bg-base-100 sticky top-0 py-8">
+      <div class="bg-base-100 sticky top-0 pt-16 pb-8">
         <div class="w-full md:w-2/3 grid grid-cols-2 mx-auto">
           <div class="text-green-300">
             <h4 class="text-center md:text-md font-medium">Total Income</h4>
