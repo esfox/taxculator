@@ -1,18 +1,29 @@
 import type { SalaryDataType, SalaryType } from '$lib/types';
 import { randomUUID } from 'crypto';
 import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import { dataStoreService } from './data-store.service';
 
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
+
 export const salaryService = {
-  list(year?: number): SalaryDataType {
+  list(params?: { fromDate?: string; toDate?: string }): SalaryDataType {
+    const { fromDate, toDate } = params ?? {};
+
     const salaryData = dataStoreService.read<SalaryType[]>();
     if (!salaryData) {
       throw new Error('Cannot read data');
     }
 
     let salaries: SalaryType[] = salaryData;
-    if (year) {
-      salaries = salaryData.filter((salary) => dayjs(salary.date).year() === year);
+    if (fromDate && dayjs(fromDate).isValid()) {
+      salaries = salaryData.filter((salary) => dayjs(salary.date).isSameOrAfter(fromDate, 'month'));
+    }
+
+    if (toDate && dayjs(toDate).isValid()) {
+      salaries = salaries.filter((salary) => dayjs(salary.date).isSameOrBefore(toDate, 'month'));
     }
 
     const salariesSorted = salaries.sort((a, b) => {
