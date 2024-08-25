@@ -14,9 +14,9 @@ export const formatCurrency = (amount?: number) =>
     .format(amount || 0)
     .replace(/^(\D+)/, '$1 ');
 
-export const debounce = (callback: Function, wait = 500) => {
+export const debounce = (callback: (...args: unknown[]) => unknown, wait = 500) => {
   let timeout: ReturnType<typeof setTimeout>;
-  return (...args: any[]) => {
+  return (...args: unknown[]) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => callback(...args), wait);
   };
