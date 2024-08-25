@@ -6,3 +6,9 @@ html,
 body {
   height: 100%;
 }
+
+::-webkit-inner-spin-button,
+::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+}
