@@ -10,5 +10,5 @@ export const actions = {
     const amount = Number(data.amount) as number;
     salaryService.save({ date, amount });
     return { success: true };
-  }
+  },
 } satisfies Actions;
