@@ -32,5 +32,5 @@ export const load = (({ url }) => {
 
   const { tax } = taxService.computeWithGraduatedTaxRates(totalIncome);
 
-  return { tax, taxPeriods };
+  return { tax, taxPeriods, income: totalIncome };
 }) satisfies PageServerLoad;
