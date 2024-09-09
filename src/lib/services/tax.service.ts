@@ -32,10 +32,12 @@ const graduatedTaxRates = [
   },
 ];
 
+const percentageTaxRate = 0.03;
+
 const optionalStandardDeduction = 0.4;
 
 export const taxService = {
-  computeWithGraduatedTaxRates(netIncome: number) {
+  computeGraduatedIncomeTax(netIncome: number) {
     const deduction = netIncome * optionalStandardDeduction;
     const taxableIncome = netIncome - deduction;
 
@@ -51,6 +53,9 @@ export const taxService = {
     }
 
     return { taxableIncome, tax, deduction };
+  },
+  computePercentageTax(netIncome: number) {
+    return netIncome * percentageTaxRate;
   },
   getPeriods(fromDate?: string, toDate?: string) {
     const from = dayjs(fromDate);

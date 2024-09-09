@@ -25,12 +25,14 @@ export const load = (({ url }) => {
     selectedTaxPeriod = taxPeriods.find((period) => period.key === taxPeriod) ?? undefined;
   }
 
-  const { totalIncome } = salaryService.list({
+  const { totalIncome: incomeInPeriod } = salaryService.list({
     fromDate: selectedTaxPeriod?.dateFrom,
     toDate: selectedTaxPeriod?.dateTo,
   });
 
-  const { tax } = taxService.computeWithGraduatedTaxRates(totalIncome);
+  const { tax: incomeTax } = taxService.computeGraduatedIncomeTax(incomeInPeriod);
+  const percentageTax = taxService.computePercentageTax(incomeInPeriod);
+  const totalTax = incomeTax + percentageTax;
 
-  return { tax, taxPeriods, income: totalIncome };
+  return { incomeTax, percentageTax, totalTax, taxPeriods, income: incomeInPeriod };
 }) satisfies PageServerLoad;
