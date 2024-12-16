@@ -26,7 +26,7 @@ export const salaryService = {
       salaries = salaries.filter((salary) => dayjs(salary.date).isSameOrBefore(toDate, 'month'));
     }
 
-    const salariesSorted = salaries.sort((a, b) => {
+    const salariesSorted = salaries.toSorted((a, b) => {
       const aDate = dayjs(a.date);
       const bDate = dayjs(b.date);
       return bDate.diff(aDate);
@@ -35,7 +35,7 @@ export const salaryService = {
     const totalIncome = salaries.reduce((total, salary) => total + salary.amount, 0);
     return {
       salaries: salariesSorted,
-      totalIncome
+      totalIncome,
     };
   },
   save({ id, date, amount }: { id?: string; date: string; amount: number }) {
@@ -65,5 +65,5 @@ export const salaryService = {
 
     salaries.splice(salaryIndex, 1);
     dataStoreService.save(salaries);
-  }
+  },
 };
