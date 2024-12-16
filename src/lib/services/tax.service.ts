@@ -65,43 +65,46 @@ export const taxService = {
       throw new Error('Invalid date/s provided');
     }
 
-    const periodTypes = [
-      TaxPeriodType.FirstQuarter,
-      TaxPeriodType.SecondQuarter,
-      TaxPeriodType.ThirdQuarter,
-      TaxPeriodType.Annual,
-    ];
-
     const periods: TaxPeriodDataType[] = [];
 
     /* Loop through years and get tax periods */
-    for (let date = from; date.year() <= to.year(); date = date.add(1, 'year')) {
-      date = date.set('date', 1);
-
+    let date = from;
+    while (date.year() <= to.year()) {
       const year = date.year();
-      const isBeforeToYear = year !== to.year();
-      const untilQuarter = isBeforeToYear ? 3 : to.quarter();
 
-      /* Get the tax periods of the first three quarters of the year */
-      for (let q = 0; q < untilQuarter; q++) {
-        const fromMonth = q * 3;
-        periods.push({
-          key: `${year}-Q${q + 1}`,
-          periodType: periodTypes[q],
-          dateFrom: date.set('month', fromMonth).toString(),
-          dateTo: date.set('month', fromMonth + 2).toString(),
-        });
-      }
+      /* First quarter */
+      periods.push({
+        key: `${year}-Q1`,
+        periodType: TaxPeriodType.FirstQuarter,
+        dateFrom: dayjs().year(year).month(0).toString(),
+        dateTo: dayjs().year(year).month(3).subtract(1, 'day').toString(),
+      });
 
-      if (isBeforeToYear) {
-        /* Get the annual tax period */
-        periods.push({
-          key: `${year}-A`,
-          periodType: TaxPeriodType.Annual,
-          dateFrom: date.set('month', 0).toString(),
-          dateTo: date.set('month', 11).toString(),
-        });
-      }
+      /* Second quarter */
+      periods.push({
+        key: `${year}-Q2`,
+        periodType: TaxPeriodType.SecondQuarter,
+        dateFrom: dayjs().year(year).month(3).toString(),
+        dateTo: dayjs().year(year).month(6).subtract(1, 'day').toString(),
+      });
+
+      /* Third quarter */
+      periods.push({
+        key: `${year}-Q3`,
+        periodType: TaxPeriodType.ThirdQuarter,
+        dateFrom: dayjs().year(year).month(6).toString(),
+        dateTo: dayjs().year(year).month(9).subtract(1, 'day').toString(),
+      });
+
+      /* Annual */
+      periods.push({
+        key: `${year}-A`,
+        periodType: TaxPeriodType.Annual,
+        dateFrom: dayjs().year(year).month(0).toString(),
+        dateTo: dayjs().year(year).month(11).toString(),
+      });
+
+      date = date.add(1, 'year');
     }
 
     return periods.reverse();
